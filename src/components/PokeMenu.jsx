@@ -4,39 +4,38 @@ import PokeFilter from '../components/PokeFilter';
 const PokeMenu = ({ pokemonList }) => {
   const [filteredPokemon, setFilteredPokemon] = useState(pokemonList);
 
-  // Handle filter change (both by type, search, and sort)
+  // Handle filter change (type, search, sorting)
   const handleFilterChange = ({ type, search, order }) => {
-    let filtered = [...pokemonList]; // Make a copy of pokemonList for filtering
+    let filtered = [...pokemonList];
 
-    // Step 1: Filter by type (if a type is selected)
+    // Filter by Type
     if (type) {
-      filtered = filtered.filter(poke => poke.type.includes(type));
+      filtered = filtered.filter((poke) => poke.type.includes(type));
     }
 
-    // Step 2: Filter by search term (if provided)
+    // Filter by Search Term
     if (search) {
-      filtered = filtered.filter(poke => poke.name.toLowerCase().includes(search.toLowerCase()));
+      filtered = filtered.filter((poke) => poke.name.toLowerCase().includes(search.toLowerCase()));
     }
 
-    // Step 3: Apply sorting after filtering
+    // Apply Sorting
     if (order) {
       switch (order) {
         case 'a-z':
-          filtered = filtered.sort((a, z) => a.name.localeCompare(z.name)); // Sort by name alphabetically
+          filtered = filtered.sort((a, z) => a.name.localeCompare(z.name));
           break;
         case 'z-a':
-          filtered = filtered.sort((a, z) => z.name.localeCompare(a.name)); // Sort by name in reverse
+          filtered = filtered.sort((a, z) => z.name.localeCompare(a.name));
           break;
         case 'type':
           filtered = filtered.sort((a, b) => {
-            const aTypes = a.type.split(", ");
-            const bTypes = b.type.split(", ");
-            
-            // Compare primary type (first type in the list)
+            const aTypes = a.type.split(', ');
+            const bTypes = b.type.split(', ');
+
             if (aTypes[0] === bTypes[0]) {
-              return a.name.localeCompare(b.name); // If primary types are the same, sort by name
+              return a.name.localeCompare(b.name);
             }
-            return aTypes[0].localeCompare(bTypes[0]); // Sort by primary type
+            return aTypes[0].localeCompare(bTypes[0]);
           });
           break;
         default:
@@ -44,42 +43,38 @@ const PokeMenu = ({ pokemonList }) => {
       }
     }
 
-    // Update the filtered Pokémon list
     setFilteredPokemon(filtered);
   };
 
-  // Optionally, you can use useEffect to update the filtered list when pokemonList changes
   useEffect(() => {
     setFilteredPokemon(pokemonList);
-  }, [pokemonList]); // Re-run when pokemonList changes
+  }, [pokemonList]);
 
   return (
-    <div className="bg-white">
+    <div className="bg-gradient-to-b from-blue-500 to-indigo-600 min-h-screen py-8 px-4">
       <PokeFilter subPokemon={pokemonList} onFilterChange={handleFilterChange} />
-      
-      <div className="mx-auto max-w-2xl px-4 py-16 sm:px-6 sm:py-24 lg:max-w-7xl lg:px-8">
-        <h2 className="text-2xl font-bold tracking-tight text-gray-900">Pokedex - 1 to 151</h2>
 
-        <div className="mt-6 grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-4 xl:gap-x-8">
-          {filteredPokemon.map((poke, index) => (
-            <div key={index} className="group relative">
-              <img 
-                src={`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${poke.id}.png`} 
-                alt={poke.name} 
-                className="aspect-square w-full rounded-md bg-gray-200 object-cover group-hover:opacity-75 lg:aspect-auto lg:h-80" 
-              />
-              <div className="mt-4 flex justify-between">
-                <div>
-                  <h3 className="text-sm text-gray-700">
-                    <a href="#">
-                      <span aria-hidden="true" className="absolute inset-0"></span>
-                      {poke.name}
-                    </a>
-                  </h3>
-                  <p className="mt-1 text-sm text-gray-500">Type: {poke.type}</p>
-                </div>
-                <p className="text-sm font-medium text-gray-900">#{poke.id}</p>
+      <div className="mx-auto max-w-7xl">
+        <h2 className="text-4xl font-extrabold text-white text-center mb-6">Pokédex - 1 to 151</h2>
+
+        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
+          {filteredPokemon.map((poke) => (
+            <div
+              key={poke.id}
+              className="relative group bg-white rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300 p-4 flex flex-col items-center"
+            >
+              <div className="relative w-32 h-32 mb-3">
+                <img
+                  src={`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${poke.id}.png`}
+                  alt={poke.name}
+                  className="w-full h-full object-contain transition-transform duration-300 group-hover:scale-110"
+                />
               </div>
+              <h3 className="text-xl font-bold text-gray-800 capitalize">{poke.name}</h3>
+              <p className="text-sm text-gray-600">Type: {poke.type}</p>
+              <p className="text-lg font-semibold text-indigo-700">#{poke.id}</p>
+
+              <div className="absolute inset-0 bg-indigo-300 opacity-0 group-hover:opacity-20 transition-opacity duration-300 rounded-xl"></div>
             </div>
           ))}
         </div>
