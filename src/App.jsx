@@ -38,6 +38,7 @@ const AppContent = ({ pokemon }) => {
 
 const App = () => {
   const [pokemon, setPokemon] = useState([]);
+  const [loading, setLoading] = useState(true); // New loading state
 
   useEffect(() => {
     const pokeApiLink = "https://pokeapi.co/api/v2/pokemon/?offset=0&limit=151";
@@ -45,7 +46,7 @@ const App = () => {
     fetch(pokeApiLink)
       .then((resp) => resp.json())
       .then((data) => {
-        // Fetch additional details for each Pokémon (like type)
+        // Fetch additional details for each Pokémon (like stats)
         Promise.all(
           data.results.map((poke, index) =>
             fetch(poke.url)
@@ -55,12 +56,32 @@ const App = () => {
                 name: poke.name,
                 type: details.types.map((t) => t.type.name).join(", "), // Extracting types
                 sprite: details.sprites.front_default, // Getting Pokémon image
+                stats: {
+                  hp: details.stats.find(stat => stat.stat.name === "hp")?.base_stat || 0,
+                  attack: details.stats.find(stat => stat.stat.name === "attack")?.base_stat || 0,
+                  defense: details.stats.find(stat => stat.stat.name === "defense")?.base_stat || 0,
+                  speed: details.stats.find(stat => stat.stat.name === "speed")?.base_stat || 0,
+                }
               }))
           )
-        ).then((pokemon) => setPokemon(pokemon));
+        ).then((pokemon) => {
+          setPokemon(pokemon);
+          setLoading(false); // Set loading to false once data is fetched
+        });
       })
-      .catch((error) => console.error("Error fetching Pokémon:", error));
+      .catch((error) => {
+        console.error("Error fetching Pokémon:", error);
+        setLoading(false); // Stop loading in case of an error
+      });
   }, []);
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center min-h-screen">
+        <h1 className="text-2xl font-bold">Loading Pokémon...</h1>
+      </div>
+    );
+  }
 
   return (
     <Router>

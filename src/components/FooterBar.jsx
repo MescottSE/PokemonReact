@@ -29,10 +29,10 @@ const FooterBar = () => {
           <div>
             <h3 className="text-lg font-semibold text-yellow-400">Follow Us</h3>
             <div className="flex justify-center md:justify-start mt-3 space-x-4">
-              <a href="#" className="text-gray-300 hover:text-yellow-300 text-xl"><FaFacebook /></a>
-              <a href="#" className="text-gray-300 hover:text-yellow-300 text-xl"><FaTwitter /></a>
-              <a href="#" className="text-gray-300 hover:text-yellow-300 text-xl"><FaInstagram /></a>
-              <a href="#" className="text-gray-300 hover:text-yellow-300 text-xl"><FaGithub /></a>
+              <a target="blank" href="https://www.facebook.com/Pokemon/" className="text-gray-300 hover:text-yellow-300 text-xl"><FaFacebook /></a>
+              <a target="blank" href="https://x.com/pokemon" className="text-gray-300 hover:text-yellow-300 text-xl"><FaTwitter /></a>
+              <a target="blank" href="https://www.instagram.com/pokemon" className="text-gray-300 hover:text-yellow-300 text-xl"><FaInstagram /></a>
+              <a target="blank" href="https://github.com/MescottSE/PokemonReact" className="text-gray-300 hover:text-yellow-300 text-xl"><FaGithub /></a>
             </div>
           </div>
         </div>

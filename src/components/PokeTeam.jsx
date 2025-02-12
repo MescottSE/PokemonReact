@@ -1,18 +1,30 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 const PokeTeam = ({ pokemonList }) => {
   const [team, setTeam] = useState([]);
 
-  // Add a Pokémon to the team (max 6)
+  useEffect(() => {
+    // Check if there's a saved team in localStorage
+    const savedTeam = JSON.parse(localStorage.getItem('pokeTeam'));
+    if (savedTeam) {
+      setTeam(savedTeam);
+    }
+  }, []);
+
+  // Add a Pokémon to the team (allow duplicates, max 6)
   const addPokemon = (pokemon) => {
-    if (team.length < 6 && !team.some(p => p.id === pokemon.id)) {
-      setTeam([...team, pokemon]);
+    if (team.length < 6) {
+      const newTeam = [...team, { ...pokemon, uniqueId: Date.now() }]; // Assign a unique ID to each added Pokémon
+      setTeam(newTeam);
+      localStorage.setItem('pokeTeam', JSON.stringify(newTeam)); // Save updated team to localStorage
     }
   };
 
-  // Remove a Pokémon from the team
-  const removePokemon = (id) => {
-    setTeam(team.filter(poke => poke.id !== id));
+  // Remove a Pokémon from the team by unique ID
+  const removePokemon = (uniqueId) => {
+    const updatedTeam = team.filter(poke => poke.uniqueId !== uniqueId);
+    setTeam(updatedTeam);
+    localStorage.setItem('pokeTeam', JSON.stringify(updatedTeam)); // Update localStorage after removal
   };
 
   return (
@@ -43,14 +55,14 @@ const PokeTeam = ({ pokemonList }) => {
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
           {team.map((poke) => (
             <div
-              key={poke.id}
+              key={poke.uniqueId}
               className="relative bg-white p-4 rounded-lg shadow-md flex flex-col items-center"
             >
               <img src={poke.sprite} alt={poke.name} className="w-24 h-24" />
               <h3 className="text-lg font-bold text-gray-700 capitalize">{poke.name}</h3>
               <p className="text-sm text-gray-500">Type: {poke.type}</p>
               <button
-                onClick={() => removePokemon(poke.id)}
+                onClick={() => removePokemon(poke.uniqueId)}
                 className="mt-2 px-3 py-1 bg-red-500 text-white rounded-lg text-sm hover:bg-red-600"
               >
                 Remove
